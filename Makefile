@@ -26,8 +26,17 @@ build/vga.o: src/drivers/vga/vga.c
 	mkdir -p build
 	$(CC) $(CFLAGS) -c $< -o $@
 
+build/math.o: src/lib/math/math.c
+	mkdir -p build
+	$(CC) $(CFLAGS) -c $< -o $@
 
-build/kernel.bin: build/entry.o build/kernel.o build/vga.o
+
+build/font_8x8_basic.o: src/lib/font/font_8x8_basic.c
+	mkdir -p build
+	$(CC) $(CFLAGS) -c $< -o $@
+
+
+build/kernel.bin: build/entry.o build/kernel.o build/vga.o build/math.o build/font_8x8_basic.o
 	$(LD) $(LDFLAGS) $^ -o $@
 
 bin/game_os.img: build/boot.bin build/kernel.bin

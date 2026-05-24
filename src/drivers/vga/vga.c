@@ -1,4 +1,6 @@
 #include "vga.h"
+#include "math.h"
+#include "font.h"
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 200
 #define VIDEO_MEMORY ((unsigned char*)0xA0000)
@@ -24,7 +26,6 @@ void vga_draw_rect(int x, int y, int w, int h, unsigned char color){
         vga_put_pixel(x, y + height, color);
         vga_put_pixel(x + w, y + height, color);
     }
-
 }
 
 void vga_fill_rect(int x,int y, int w, int h, unsigned char color){
@@ -34,11 +35,6 @@ void vga_fill_rect(int x,int y, int w, int h, unsigned char color){
         }
     }
 }
-
-int abs(int x) {
-    return (x < 0) ? -x : x;
-}
-
 
 void vga_draw_line(int x0, int y0, int x1, int y1, unsigned char color) {
     int dx = abs(x1 - x0);
@@ -58,5 +54,18 @@ void vga_draw_line(int x0, int y0, int x1, int y1, unsigned char color) {
 
         if (e2 >= dy) { err += dy; x0 += sx; }
         if (e2 <= dx) { err += dx; y0 += sy; }
+    }
+}
+
+
+void vga_putchar(char c, int x, int y, unsigned char color){
+    const unsigned char* glyph = font8x8_basic[(int)c];
+
+    for (int row = 0; row < 8; row++){
+        for (int col = 0; col < 8; col++){
+            if (glyph[row] & (1 << (col))){
+                vga_put_pixel(x + col, y +row, color);
+            }
+        }
     }
 }
